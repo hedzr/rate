@@ -1,6 +1,12 @@
 # go-rate
 
-![Go](https://github.com/hedzr/go-rate/workflows/Go/badge.svg)
+![Go](https://github.com/hedzr/rate/workflows/Go/badge.svg)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/rate.svg?label=release)](https://github.com/hedzr/rate/releases)
+[![](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/rate)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/hedzr/rate)
+<!-- [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhedzr%2Frate.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhedzr%2Frate?ref=badge_shield) -->
+[![Go Report Card](https://goreportcard.com/badge/github.com/hedzr/rate)](https://goreportcard.com/report/github.com/hedzr/rate)
+[![Coverage Status](https://coveralls.io/repos/github/hedzr/rate/badge.svg?branch=master&.9)](https://coveralls.io/github/hedzr/rate?branch=master)
 
 `go-rate` provides the rate limiters generally.
 
