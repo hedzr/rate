@@ -20,7 +20,7 @@ go 1.13
 
 require (
 	github.com/gin-gonic/gin v1.7.2
-	github.com/hedzr/cmdr v1.8.5
+	github.com/hedzr/cmdr v1.8.7
 	github.com/hedzr/log v0.3.21
 	gopkg.in/hedzr/errors.v2 v2.1.5
 )

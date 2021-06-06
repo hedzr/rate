@@ -100,97 +100,97 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Docker Build
-        #if: startsWith(github.ref, 'refs/tags/v') || contains(github.ref, '/master')
-        if: startsWith(github.ref, 'refs/tags/v')
-        env:
-          HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IMAGE_TAG:
-        run: |
-          if [[ $ENABLE_DOCKER -eq 1 ]]; then
-            if [[ -f Dockerfile ]]; then
-              IMAGE_TAG=${GITHUB_REF#*/}
-              IMAGE_TAG=${IMAGE_TAG#*/}
-              IMAGE_TAG=$(echo $IMAGE_TAG | sed -e "s#^v##")
-              echo "Using IMAGE_TAG: $IMAGE_TAG"
-              docker build \
-                -t docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:$IMAGE_TAG \
-                -t docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:latest \
-                -t hedzr/$APPNAME:$IMAGE_TAG \
-                -t hedzr/$APPNAME:latest \
-                .
-              echo $GH_TOKEN | docker login docker.pkg.github.com -u hedzr --password-stdin
-              # docker tag IMAGE_ID docker.pkg.github.com/hedzr/$APPNAME:$VERSION
-              docker push docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:$IMAGE_TAG
-              docker push docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:latest
-              #
-              echo $HUB_TOKEN | docker login -u hedzr --password-stdin
-              # docker tag docker.pkg.github.com/hedzr/$APPNAME:latest hedzr/$APPNAME:$IMAGE_TAG
-              # docker tag docker.pkg.github.com/hedzr/$APPNAME:latest hedzr/$APPNAME:latest
-              docker push hedzr/$APPNAME:$IMAGE_TAG
-              docker push hedzr/$APPNAME:latest
-            fi
-          fi
-
-      - name: Build
-        run: |
-          export GIT_REVISION="$(git rev-parse --short HEAD)"
-          export GOVERSION="$(go version)"
-          export BUILDTIME="$(date -u '+%Y-%m-%d_%H-%M-%S')"
-          export VERSION="$(grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")"
-          export W_PKG="github.com/hedzr/cmdr/conf"
-          export LDFLAGS="-s -w \
-            -X '$W_PKG.Githash=$GIT_REVISION' \
-            -X '$W_PKG.GoVersion=$GOVERSION' \
-            -X '$W_PKG.Buildstamp=$BUILDTIME' \
-            -X '$W_PKG.Version=$VERSION'"
-          cat <<EOF
-                Version: $VERSION
-           GIT_REVISION: $GIT_REVISION
-              GOVERSION: $GOVERSION
-              BUILDTIME: $BUILDTIME
-          EOF
-          for app in ${APPS:-$APPNAME}; do
-            for dir in ${FROM_FOLDER:-.}; do
-              SDIR=cli; [[ $FROM_FOLDER != "." ]] && SDIR=$app
-              for GOOS in windows linux darwin; do
-                for GOARCH in amd64; do
-                  suf=; if [[ $GOOS == "windows" ]]; then suf=".exe"; fi
-                  CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH \
-                    go build -v -a -installsuffix cgo -ldflags "$LDFLAGS" -o ./bin/$app$suf ./$dir/$SDIR
-                  chmod +x ./bin/$app$suf
-                  if [[ $GOOS == "windows" ]]; then
-                    zip -u ./bin/$app-v$VERSION-$GOOS-$GOARCH$suf.zip ./bin/$app$suf
-                    cd ci; zip -u -r ../bin/$app-v$VERSION-$GOOS-$GOARCH$suf.zip etc/*; cd ..
-                    rm ./bin/$app$suf
-                  else
-                    tar -czf ./bin/$app-v$VERSION-$GOOS-$GOARCH$suf.tgz ./bin/$app$suf -C ci etc/$app && rm ./bin/$app$suf
-                  fi
-                done
-              done
-            done
-          done
-          shasum -a 256 -b ./bin/* > bin/sha256sum.txt
-          ls -la bin/
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@master
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          name: binaries
-          path: bin/
-
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bin/*
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
-          #body:
+#      - name: Docker Build
+#        #if: startsWith(github.ref, 'refs/tags/v') || contains(github.ref, '/master')
+#        if: startsWith(github.ref, 'refs/tags/v')
+#        env:
+#          HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          IMAGE_TAG:
+#        run: |
+#          if [[ $ENABLE_DOCKER -eq 1 ]]; then
+#            if [[ -f Dockerfile ]]; then
+#              IMAGE_TAG=${GITHUB_REF#*/}
+#              IMAGE_TAG=${IMAGE_TAG#*/}
+#              IMAGE_TAG=$(echo $IMAGE_TAG | sed -e "s#^v##")
+#              echo "Using IMAGE_TAG: $IMAGE_TAG"
+#              docker build \
+#                -t docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:$IMAGE_TAG \
+#                -t docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:latest \
+#                -t hedzr/$APPNAME:$IMAGE_TAG \
+#                -t hedzr/$APPNAME:latest \
+#                .
+#              echo $GH_TOKEN | docker login docker.pkg.github.com -u hedzr --password-stdin
+#              # docker tag IMAGE_ID docker.pkg.github.com/hedzr/$APPNAME:$VERSION
+#              docker push docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:$IMAGE_TAG
+#              docker push docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:latest
+#              #
+#              echo $HUB_TOKEN | docker login -u hedzr --password-stdin
+#              # docker tag docker.pkg.github.com/hedzr/$APPNAME:latest hedzr/$APPNAME:$IMAGE_TAG
+#              # docker tag docker.pkg.github.com/hedzr/$APPNAME:latest hedzr/$APPNAME:latest
+#              docker push hedzr/$APPNAME:$IMAGE_TAG
+#              docker push hedzr/$APPNAME:latest
+#            fi
+#          fi
+#
+#      - name: Build
+#        run: |
+#          export GIT_REVISION="$(git rev-parse --short HEAD)"
+#          export GOVERSION="$(go version)"
+#          export BUILDTIME="$(date -u '+%Y-%m-%d_%H-%M-%S')"
+#          export VERSION="$(grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")"
+#          export W_PKG="github.com/hedzr/cmdr/conf"
+#          export LDFLAGS="-s -w \
+#            -X '$W_PKG.Githash=$GIT_REVISION' \
+#            -X '$W_PKG.GoVersion=$GOVERSION' \
+#            -X '$W_PKG.Buildstamp=$BUILDTIME' \
+#            -X '$W_PKG.Version=$VERSION'"
+#          cat <<EOF
+#                Version: $VERSION
+#           GIT_REVISION: $GIT_REVISION
+#              GOVERSION: $GOVERSION
+#              BUILDTIME: $BUILDTIME
+#          EOF
+#          for app in ${APPS:-$APPNAME}; do
+#            for dir in ${FROM_FOLDER:-.}; do
+#              SDIR=cli; [[ $FROM_FOLDER != "." ]] && SDIR=$app
+#              for GOOS in windows linux darwin; do
+#                for GOARCH in amd64; do
+#                  suf=; if [[ $GOOS == "windows" ]]; then suf=".exe"; fi
+#                  CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH \
+#                    go build -v -a -installsuffix cgo -ldflags "$LDFLAGS" -o ./bin/$app$suf ./$dir/$SDIR
+#                  chmod +x ./bin/$app$suf
+#                  if [[ $GOOS == "windows" ]]; then
+#                    zip -u ./bin/$app-v$VERSION-$GOOS-$GOARCH$suf.zip ./bin/$app$suf
+#                    cd ci; zip -u -r ../bin/$app-v$VERSION-$GOOS-$GOARCH$suf.zip etc/*; cd ..
+#                    rm ./bin/$app$suf
+#                  else
+#                    tar -czf ./bin/$app-v$VERSION-$GOOS-$GOARCH$suf.tgz ./bin/$app$suf -C ci etc/$app && rm ./bin/$app$suf
+#                  fi
+#                done
+#              done
+#            done
+#          done
+#          shasum -a 256 -b ./bin/* > bin/sha256sum.txt
+#          ls -la bin/
+#
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@master
+#        if: startsWith(github.ref, 'refs/tags/v')
+#        with:
+#          name: binaries
+#          path: bin/
+#
+#      - name: Upload binaries to release
+#        uses: svenstaro/upload-release-action@v2
+#        if: startsWith(github.ref, 'refs/tags/v')
+#        with:
+#          repo_token: ${{ secrets.GITHUB_TOKEN }}
+#          file: bin/*
+#          tag: ${{ github.ref }}
+#          overwrite: true
+#          file_glob: true
+#          #body:
 
       # - name: Update Homebrew Formula
       #   uses: izumin5210/action-homebrew-tap@v1

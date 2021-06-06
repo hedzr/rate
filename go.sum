@@ -21,15 +21,14 @@ github.com/golang/protobuf v1.3.3 h1:gyjaxf+svBWX08ZjK86iN9geUJF0H6gp2IRKX6Nf6/I
 github.com/golang/protobuf v1.3.3/go.mod h1:vzj43D7+SQXF/4pzW/hwtAqwc6iTitCiVSaWz5lYuqw=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
-github.com/hedzr/cmdr v1.8.5 h1:ijL8SesegPeiUytqaUGdAuE4TK8ZjFB+XrII3I05/rA=
-github.com/hedzr/cmdr v1.8.5/go.mod h1:umh2MV+5RvlhdHF2yiRRuil+rwfFvb227mQ5RVTnK+o=
+github.com/hedzr/cmdr v1.8.7 h1:0HhadvOqpdmM06yP8mBiwQS3QgGmbK9EywPqNBw1Qv0=
+github.com/hedzr/cmdr v1.8.7/go.mod h1:MhY76WDsBbv0bbSC7LbaSsC4aOC1GzqHT+/9lBrGabs=
 github.com/hedzr/cmdr-base v0.1.3 h1:pMhVLP+Uxdhuf6BeasAC2OivMXJ3vxJHvFJHPQscQPU=
 github.com/hedzr/cmdr-base v0.1.3/go.mod h1:c3vMkHa5PME2P2W8lE3T9+JX12tq9tmCUt6lXbmt5kI=
-github.com/hedzr/log v0.3.19/go.mod h1:E9WB0BC2AAX58UDlFC2zg9X19soXmTZRnXubWR04AiE=
 github.com/hedzr/log v0.3.21 h1:mbTjaMo2QSUa1XnPy1tOMB+A7ftM1HY2T2KpefJ0U94=
 github.com/hedzr/log v0.3.21/go.mod h1:bmQqsGC0rv4r/5ISLJO++HM2kYoKfyBcRbncMknYNjY=
-github.com/hedzr/logex v1.3.19 h1:lZh5D4eGgmXPTx2gQtlm2ON51MZNaAxhi4gsP5wALP8=
-github.com/hedzr/logex v1.3.19/go.mod h1:hGdGkai7BW2TXTmfGCWAkZXJWuxQl+YYg3TWgKUq5N4=
+github.com/hedzr/logex v1.3.21 h1:QI1cXYtsb1QNzjXqTsSp16JEUOR2bpulsUhZ/6ziRIM=
+github.com/hedzr/logex v1.3.21/go.mod h1:+AhwdqkZ275ZcmehHEuRbrP9jAlahEvtOWKOwJE7wo8=
 github.com/json-iterator/go v1.1.9 h1:9yzud/Ht36ygwatGx56VwCZtlI/2AD15T1X2sjSuGns=
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
@@ -108,7 +107,6 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 h1:qIbj1fsPNlZgppZ+VLlY7N33q108Sa+fhmuc+sWQYwY=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/errgo.v2 v2.1.0/go.mod h1:hNsd1EY+bozCKY1Ytp96fpM3vjJbqLJn88ws8XvfDNI=
-gopkg.in/hedzr/errors.v2 v2.1.3/go.mod h1:DEescy6i8SVj60/wLdTtFfx9r+LIctBbOLf7hYJ30AA=
 gopkg.in/hedzr/errors.v2 v2.1.5 h1:fSHbWEoKcyfc8olz/0bfGshNlTnqEKZJ5Bo+bC6jdAQ=
 gopkg.in/hedzr/errors.v2 v2.1.5/go.mod h1:DEescy6i8SVj60/wLdTtFfx9r+LIctBbOLf7hYJ30AA=
 gopkg.in/natefinch/lumberjack.v2 v2.0.0 h1:1Lc07Kr7qY4U2YPouBjpCLxpiyxIVoxqXgkXLknAOE8=
