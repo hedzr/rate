@@ -44,6 +44,8 @@ profile.cov
 .tmp.*
 
 *.local
+b.sh
+
 
 ### Go template
 # Binaries for programs and plugins

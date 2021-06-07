@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// ForGin builds a gin.HandlerFunc from a Config object
 func ForGin(config *Config) gin.HandlerFunc {
 	l := &exLimiter{
 		enabled:   config.Enabled,
@@ -21,7 +22,13 @@ func ForGin(config *Config) gin.HandlerFunc {
 	return l.Middleware()
 }
 
-func NewLimiterForGin(interval time.Duration, capacity int64, keyGen KeyFunc) *exLimiter {
+// Middleware interface
+type Middleware interface {
+	Middleware() gin.HandlerFunc
+}
+
+// NewLimiterForGin builds a generic limiter wrapper which provides a Middleware() api for gin.Use.
+func NewLimiterForGin(interval time.Duration, capacity int64, keyGen KeygenFunc) Middleware {
 	limiters := make(map[string]rateapi.Limiter)
 	return &exLimiter{
 		true,
@@ -33,7 +40,7 @@ func NewLimiterForGin(interval time.Duration, capacity int64, keyGen KeyFunc) *e
 	}
 }
 
-func (r *exLimiter) buildKeyFunc(config *Config) KeyFunc {
+func (r *exLimiter) buildKeyFunc(config *Config) KeygenFunc {
 	return func(ctx *gin.Context) (string, error) {
 		key := ctx.Request.Header.Get(config.HeaderKeyName)
 		if key != "" {
@@ -50,14 +57,15 @@ func (r *exLimiter) buildKeyFunc(config *Config) KeyFunc {
 	}
 }
 
-type KeyFunc func(ctx *gin.Context) (string, error)
+// KeygenFunc returns a functor to build a unique key name which can be used to associate with a limiter object
+type KeygenFunc func(ctx *gin.Context) (uniqueKeyName string, err error)
 
 type exLimiter struct {
 	enabled    bool
 	algorithm  string
 	d          time.Duration
 	capacity   int64
-	rateKeygen KeyFunc
+	rateKeygen KeygenFunc
 	limiters   map[string]rateapi.Limiter
 }
 
@@ -80,11 +88,11 @@ func (r *exLimiter) get(ctx *gin.Context) (rateapi.Limiter, error) {
 		limiter := rate.New(rate.TokenBucket, int64(time.Minute/1000), time.Minute)
 		r.limiters[key] = limiter
 		return limiter, nil
-	} else {
-		limiter := rate.New(rate.TokenBucket, r.capacity, r.d)
-		r.limiters[key] = limiter
-		return limiter, nil
 	}
+
+	limiter := rate.New(rate.TokenBucket, r.capacity, r.d)
+	r.limiters[key] = limiter
+	return limiter, nil
 }
 
 func (r *exLimiter) Middleware() gin.HandlerFunc {
@@ -142,6 +150,9 @@ func (r *exLimiter) Middleware() gin.HandlerFunc {
 //	}
 //}
 
+// ErrRateLimitPassed identify a special state that an exception key was found.
+// The limiter shouldn't be applied to the request which has been tagged with the exception key.
+//
 var ErrRateLimitPassed = errors.New("always passed up for exceptions")
 
 const passedBucketName = "exceptions-met"

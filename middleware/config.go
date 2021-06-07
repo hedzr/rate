@@ -1,3 +1,4 @@
+// Package middleware provides the middlewares for http servers such as gin, echo(to-do)...
 package middleware
 
 import (
@@ -62,6 +63,7 @@ func LoadConfig(keyPath string) []Config {
 	return dd
 }
 
+// Router is an abstract interface for any gin router objects (gin.Engine, gin.RouterGroup, ...)
 type Router interface {
 	gin.IRouter
 	// gin.IRoutes

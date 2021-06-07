@@ -1,10 +1,13 @@
+// Package counter implements counter algorithm
 package counter
 
 import (
+	"github.com/hedzr/rate/rateapi"
 	"time"
 )
 
-func New(maxCount int64, d time.Duration) *counter {
+// New make a new instance of limiter
+func New(maxCount int64, d time.Duration) rateapi.Limiter {
 	return &counter{
 		true,
 		int(maxCount),

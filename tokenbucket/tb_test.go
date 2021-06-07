@@ -42,7 +42,7 @@ func TestTokenBucketLimiterNonBlocked(b *testing.T) {
 	for i := 0; i < 120; i++ {
 		ok := l.Take(1)
 		if !ok {
-			b.Logf("#%d Take() returns not ok, counter: %v", i, l.Count())
+			b.Logf("#%d Take() returns not ok, counter: %v", i, l.(interface{ Count() int32 }).Count())
 			time.Sleep(100 * time.Millisecond)
 		} else {
 			//b.Logf("OK: #%d Take(), counter: %v", i, l.count)
@@ -51,7 +51,7 @@ func TestTokenBucketLimiterNonBlocked(b *testing.T) {
 		}
 	}
 	b.Logf("%v requests allowed.", counter)
-	b.Log(l.Enabled(), l.Count(), l.Available(), l.Capacity())
+	b.Log(l.Enabled(), l.(interface{ Count() int32 }).Count(), l.Available(), l.Capacity())
 	l.SetEnabled(false)
 }
 

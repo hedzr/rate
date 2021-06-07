@@ -1,12 +1,15 @@
+// Package tokenbucket implements token-bucket algorithm
 package tokenbucket
 
 import (
 	"github.com/hedzr/log"
+	"github.com/hedzr/rate/rateapi"
 	"sync/atomic"
 	"time"
 )
 
-func New(maxCount int64, d time.Duration) *tokenBucket {
+// New make a new instance of limiter
+func New(maxCount int64, d time.Duration) rateapi.Limiter {
 	return (&tokenBucket{
 		true,
 		int32(maxCount),

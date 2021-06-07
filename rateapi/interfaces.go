@@ -1,3 +1,4 @@
+// Package rateapi provides the basic interfaces of hedzr/rate packages.
 package rateapi
 
 import (

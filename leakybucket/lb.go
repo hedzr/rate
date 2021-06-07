@@ -1,12 +1,15 @@
+// Package leakybucket implements leaky-bucket algorithm
 package leakybucket
 
 import (
 	"github.com/hedzr/log"
+	"github.com/hedzr/rate/rateapi"
 	"sync/atomic"
 	"time"
 )
 
-func New(maxCount int64, d time.Duration) *leakyBucket {
+// New make a new instance of limiter
+func New(maxCount int64, d time.Duration) rateapi.Limiter {
 	return (&leakyBucket{
 		true,
 		int64(maxCount),

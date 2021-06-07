@@ -20,7 +20,7 @@ func TestCounterLimiter(b *testing.T) {
 	for i := 0; i < 120; i++ {
 		ok := l.Take(1)
 		if !ok {
-			b.Logf("#%d Take() returns not ok, remained ticks: %vns, counter: %v", i, l.tick-time.Now().UnixNano(), l.count)
+			b.Logf("#%d Take() returns not ok, remained ticks: %vns, counter: %v", i, l.(interface{ Ticks() int64 }).Ticks()-time.Now().UnixNano(), l.(interface{ Count() int }).Count())
 			time.Sleep(100 * time.Millisecond)
 		} else {
 			//time.Sleep(5 * time.Millisecond)
@@ -42,6 +42,6 @@ func TestCounterLimiterBlocked(b *testing.T) {
 		prev = now
 	}
 	b.Logf("%v requests allowed.", counter)
-	b.Log(l.Enabled(), l.Count(), l.Available(), l.Capacity())
+	b.Log(l.Enabled(), l.Available(), l.Capacity())
 	l.SetEnabled(false)
 }
