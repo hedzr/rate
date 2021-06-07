@@ -29,7 +29,7 @@ type leakyBucket struct {
 func (s *leakyBucket) Enabled() bool     { return s.enabled }
 func (s *leakyBucket) SetEnabled(b bool) { s.enabled = b }
 func (s *leakyBucket) Count() int64      { return atomic.LoadInt64(&s.count) }
-func (s *leakyBucket) Available() int64  { return int64(s.count) }
+func (s *leakyBucket) Available() int64  { return int64(atomic.LoadInt64(&s.count)) }
 func (s *leakyBucket) Capacity() int64   { return int64(s.Maximal) }
 
 func (s *leakyBucket) Close() {
@@ -48,9 +48,9 @@ func (s *leakyBucket) start(d time.Duration) *leakyBucket {
 	return s
 }
 
-func (s *leakyBucket) looper(d time.Duration) {
-	// nothing to do
-}
+//func (s *leakyBucket) looper(d time.Duration) {
+//	// nothing to do
+//}
 
 func (s *leakyBucket) max(a, b int64) int64 {
 	if a < b {
@@ -62,11 +62,14 @@ func (s *leakyBucket) max(a, b int64) int64 {
 func (s *leakyBucket) take(count int) (requestAt time.Time, ok bool) {
 	requestAt = time.Now()
 
-	s.count = s.max(0, s.count-(requestAt.UnixNano()-s.refreshTime)/s.rate*int64(count))
-	s.refreshTime = requestAt.UnixNano()
+	rtm := atomic.LoadInt64(&s.refreshTime)
+	cnt := atomic.LoadInt64(&s.count)
+	atomic.StoreInt64(&s.count, s.max(0, cnt-(requestAt.UnixNano()-rtm)/s.rate*int64(count)))
+	atomic.StoreInt64(&s.refreshTime, requestAt.UnixNano())
 
-	if s.count < s.Maximal {
-		s.count += int64(count)
+	cnt = atomic.LoadInt64(&s.count)
+	if cnt < s.Maximal {
+		atomic.AddInt64(&s.count, int64(count))
 		ok = true
 	}
 

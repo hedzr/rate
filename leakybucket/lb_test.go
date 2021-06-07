@@ -55,6 +55,8 @@ func TestLeakyBucketLimiterNonBlocked(b *testing.T) {
 		}
 	}
 	b.Logf("%v requests allowed.", counter)
+	b.Log(l.Enabled(), l.Count(), l.Available(), l.Capacity())
+	l.SetEnabled(false)
 }
 
 func TestTB(b *testing.T) {
@@ -86,7 +88,15 @@ func runner(b *testing.T, l rateapi.Limiter, counter *int64, rand randomizer.Ran
 		} else {
 			//b.Logf("OK: #%d Take(), counter: %v", i, l.count)
 			atomic.AddInt64(counter, 1)
-			time.Sleep(time.Duration(rand.NextInRange(5, 15)) * time.Millisecond)
+			time.Sleep(time.Duration(safeRandNumber(rand, 5, 15)) * time.Millisecond)
 		}
 	}
 }
+
+func safeRandNumber(rand randomizer.Randomizer, min, max int) int {
+	mu.Lock()
+	defer mu.Unlock()
+	return rand.NextInRange(min, max)
+}
+
+var mu sync.Mutex

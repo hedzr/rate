@@ -1,6 +1,7 @@
 package counter
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -27,4 +28,20 @@ func TestCounterLimiter(b *testing.T) {
 		}
 	}
 	b.Logf("%v requests allowed.", counter)
+}
+
+func TestCounterLimiterBlocked(b *testing.T) {
+	var counter int
+	l := New(100, time.Second) // one req per 10ms
+	defer l.Close()
+	prev := time.Now()
+	for i := 0; i < 120; i++ {
+		now := l.TakeBlocked(1)
+		fmt.Println(i, now.Sub(prev), l.Available())
+		counter++
+		prev = now
+	}
+	b.Logf("%v requests allowed.", counter)
+	b.Log(l.Enabled(), l.Count(), l.Available(), l.Capacity())
+	l.SetEnabled(false)
 }

@@ -41,9 +41,11 @@ func New(algorithm Algorithm, maxCount int64, d time.Duration) rateapi.Limiter {
 func CountOf(limiter rateapi.Limiter) int64 {
 	if c, ok := limiter.(interface{ Count() int }); ok {
 		return int64(c.Count())
-	} else if c, ok := limiter.(interface{ Count() int64 }); ok {
+	}
+	if c, ok := limiter.(interface{ Count() int64 }); ok {
 		return int64(c.Count())
-	} else if c, ok := limiter.(interface{ Count() int32 }); ok {
+	}
+	if c, ok := limiter.(interface{ Count() int32 }); ok {
 		return int64(c.Count())
 	}
 	return 0

@@ -29,7 +29,7 @@ type tokenBucket struct {
 func (s *tokenBucket) Enabled() bool     { return s.enabled }
 func (s *tokenBucket) SetEnabled(b bool) { s.enabled = b }
 func (s *tokenBucket) Count() int32      { return atomic.LoadInt32(&s.count) }
-func (s *tokenBucket) Available() int64  { return int64(s.count) }
+func (s *tokenBucket) Available() int64  { return int64(atomic.LoadInt32(&s.count)) }
 func (s *tokenBucket) Capacity() int64   { return int64(s.Maximal) }
 
 func (s *tokenBucket) Close() {
