@@ -8,6 +8,7 @@ import (
 
 func New(maxCount int64, d time.Duration) *leakyBucket {
 	return (&leakyBucket{
+		true,
 		int64(maxCount),
 		make(chan struct{}),
 		int64(d) / int64(maxCount),
@@ -17,6 +18,7 @@ func New(maxCount int64, d time.Duration) *leakyBucket {
 }
 
 type leakyBucket struct {
+	enabled     bool
 	Maximal     int64
 	exitCh      chan struct{}
 	rate        int64
@@ -24,9 +26,11 @@ type leakyBucket struct {
 	count       int64
 }
 
-func (s *leakyBucket) Count() int64     { return atomic.LoadInt64(&s.count) }
-func (s *leakyBucket) Available() int64 { return int64(s.count) }
-func (s *leakyBucket) Capacity() int64  { return int64(s.Maximal) }
+func (s *leakyBucket) Enabled() bool     { return s.enabled }
+func (s *leakyBucket) SetEnabled(b bool) { s.enabled = b }
+func (s *leakyBucket) Count() int64      { return atomic.LoadInt64(&s.count) }
+func (s *leakyBucket) Available() int64  { return int64(s.count) }
+func (s *leakyBucket) Capacity() int64   { return int64(s.Maximal) }
 
 func (s *leakyBucket) Close() {
 	close(s.exitCh)

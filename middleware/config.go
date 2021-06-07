@@ -13,6 +13,7 @@ import (
 type Config struct {
 	Name          string        `yaml:"name" json:"name,omitempty"`
 	Description   string        `yaml:"description" json:"description,omitempty"`
+	Enabled       bool          `yaml:"enabled" json:"enabled,omitempty"`
 	Algorithm     string        `yaml:"algorithm" json:"algorithm,omitempty"`
 	Interval      time.Duration `yaml:"interval" json:"interval,omitempty"`
 	MaxRequests   int64         `yaml:"max-requests" json:"max-requests,omitempty"`
@@ -85,6 +86,8 @@ type Router interface {
 func LoadConfigForGin(keyPath string, rg Router) {
 	limiterConfigs := LoadConfig(keyPath)
 	for _, cfg := range limiterConfigs {
+		// if cfg.Enabled {
 		rg.Use(ForGin(&cfg))
+		// }
 	}
 }

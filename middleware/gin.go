@@ -10,7 +10,8 @@ import (
 )
 
 func ForGin(config *Config) gin.HandlerFunc {
-	l := &Limiter{
+	l := &exLimiter{
+		enabled:   config.Enabled,
 		algorithm: config.Algorithm,
 		d:         config.Interval,
 		capacity:  int64(config.MaxRequests),
@@ -20,9 +21,10 @@ func ForGin(config *Config) gin.HandlerFunc {
 	return l.Middleware()
 }
 
-func NewLimiterForGin(interval time.Duration, capacity int64, keyGen KeyFunc) *Limiter {
+func NewLimiterForGin(interval time.Duration, capacity int64, keyGen KeyFunc) *exLimiter {
 	limiters := make(map[string]rateapi.Limiter)
-	return &Limiter{
+	return &exLimiter{
+		true,
 		string(rate.TokenBucket),
 		interval,
 		capacity,
@@ -31,7 +33,7 @@ func NewLimiterForGin(interval time.Duration, capacity int64, keyGen KeyFunc) *L
 	}
 }
 
-func (r *Limiter) buildKeyFunc(config *Config) KeyFunc {
+func (r *exLimiter) buildKeyFunc(config *Config) KeyFunc {
 	return func(ctx *gin.Context) (string, error) {
 		key := ctx.Request.Header.Get(config.HeaderKeyName)
 		if key != "" {
@@ -50,7 +52,8 @@ func (r *Limiter) buildKeyFunc(config *Config) KeyFunc {
 
 type KeyFunc func(ctx *gin.Context) (string, error)
 
-type Limiter struct {
+type exLimiter struct {
+	enabled    bool
 	algorithm  string
 	d          time.Duration
 	capacity   int64
@@ -58,7 +61,7 @@ type Limiter struct {
 	limiters   map[string]rateapi.Limiter
 }
 
-func (r *Limiter) get(ctx *gin.Context) (rateapi.Limiter, error) {
+func (r *exLimiter) get(ctx *gin.Context) (rateapi.Limiter, error) {
 	key, err := r.rateKeygen(ctx)
 
 	if err != nil {
@@ -84,12 +87,12 @@ func (r *Limiter) get(ctx *gin.Context) (rateapi.Limiter, error) {
 	}
 }
 
-func (r *Limiter) Middleware() gin.HandlerFunc {
+func (r *exLimiter) Middleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		limiter, err := r.get(ctx)
 		if err != nil {
 			ctx.AbortWithError(429, err)
-		} else if limiter != nil {
+		} else if limiter != nil && limiter.Enabled() {
 			if limiter.Take(1) {
 				ctx.Writer.Header().Set("X-RateLimit-Remaining", fmt.Sprintf("%d", limiter.Available()))
 				ctx.Writer.Header().Set("X-RateLimit-Limit", fmt.Sprintf("%d", limiter.Capacity()))
@@ -108,14 +111,14 @@ func (r *Limiter) Middleware() gin.HandlerFunc {
 	}
 }
 
-//func (r *Limiter) getRL(ctx gin.Context) rateapi.Limiter {
+//func (r *exLimiter) getRL(ctx gin.Context) rateapi.exLimiter {
 //	if r.limiter == nil {
 //		r.limiter = leakybucket.New(100, time.Second, false)
 //	}
 //	return r.limiter
 //}
 //
-//func (r *Limiter) SimpleMiddleware() gin.HandlerFunc {
+//func (r *exLimiter) SimpleMiddleware() gin.HandlerFunc {
 //	return func(ctx *gin.Context) {
 //		limiter := r.getRL(ctx)
 //		if err != nil {

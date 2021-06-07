@@ -6,6 +6,7 @@ import (
 
 func New(maxCount int64, d time.Duration) *counter {
 	return &counter{
+		true,
 		int(maxCount),
 		d,
 		0,
@@ -14,11 +15,15 @@ func New(maxCount int64, d time.Duration) *counter {
 }
 
 type counter struct {
+	enabled bool
 	Maximal int
 	Period  time.Duration
 	count   int
 	tick    int64 // in nanosecond
 }
+
+func (s *counter) Enabled() bool     { return s.enabled }
+func (s *counter) SetEnabled(b bool) { s.enabled = b }
 
 func (s *counter) take(count int) bool {
 	if time.Now().UnixNano() > s.tick {

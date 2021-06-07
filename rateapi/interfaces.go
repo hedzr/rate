@@ -17,6 +17,11 @@ type Limiter interface {
 	Available() int64
 	// Capacity returns a number for 'X-RateLimit-Limit'
 	Capacity() int64
+
+	// Enabled __
+	Enabled() bool
+	// SetEnabled __
+	SetEnabled(b bool)
 }
 
 type endMeasurable interface {
