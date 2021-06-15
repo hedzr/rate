@@ -73,11 +73,10 @@ func (r *exLimiter) get(ctx *gin.Context) (rateapi.Limiter, error) {
 	key, err := r.rateKeygen(ctx)
 
 	if err != nil {
-		if err == ErrRateLimitPassed {
-			err, key = nil, passedBucketName
-		} else {
+		if err != ErrRateLimitPassed {
 			return nil, err
 		}
+		err, key = nil, passedBucketName
 	}
 
 	if limiter, existed := r.limiters[key]; existed {
