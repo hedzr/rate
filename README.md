@@ -9,6 +9,19 @@
 
 `go-rate` provides the rate limiters generally.
 
+## Features
+
+## History
+
+- v0.5.0
+  - BREAK: To decrease unecessary dependants, we removed `middleware` subpackage. It has been moved into `supports/` and taged with `ignore`.
+    - You must copy its codes to use it.
+  - the codes reviewed
+  - no any third-party deps now, even from mine.
+
+- v0.1.x
+  - as is
+
 ## Usages
 
 ### Simple
