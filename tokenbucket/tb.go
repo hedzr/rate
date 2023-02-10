@@ -2,10 +2,11 @@
 package tokenbucket
 
 import (
-	"github.com/hedzr/log"
-	"github.com/hedzr/rate/rateapi"
 	"sync/atomic"
 	"time"
+
+	"github.com/hedzr/rate/pkg/logger"
+	"github.com/hedzr/rate/rateapi"
 )
 
 // New make a new instance of limiter
@@ -41,7 +42,7 @@ func (s *tokenBucket) Close() {
 
 func (s *tokenBucket) start(d time.Duration) *tokenBucket {
 	if s.rate < 1000 {
-		log.Errorf("the rate cannot be less than 1000us, it's %v", s.rate)
+		logger.Errorf("the rate cannot be less than 1000us, it's %v", s.rate)
 		return nil
 	}
 

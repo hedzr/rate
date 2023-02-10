@@ -1,11 +1,15 @@
+//go:build ignore
+// +build ignore
+
 package main
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hedzr/rate"
-	"github.com/hedzr/rate/middleware"
-	"time"
+	"github.com/hedzr/rate/supports/middleware"
 )
 
 func main() {

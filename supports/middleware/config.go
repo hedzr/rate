@@ -1,13 +1,18 @@
 // Package middleware provides the middlewares for http servers such as gin, echo(to-do)...
+
+//go:build ignore
+// +build ignore
+
 package middleware
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hedzr/cmdr"
 	"github.com/hedzr/cmdr/conf"
-	"github.com/hedzr/log"
 	"github.com/hedzr/rate"
-	"time"
+	"github.com/hedzr/rate/pkg/logger"
 )
 
 // Config is an abstract structure for a rate limiter.
@@ -31,21 +36,23 @@ type Config struct {
 //
 // For example:
 //
-//    config := middleware.LoadConfig("server.rate-limite")
-//    ginApp.Use(middleware.ForGin(config))
+//	config := middleware.LoadConfig("server.rate-limite")
+//	ginApp.Use(middleware.ForGin(config))
 //
 // And the corresponding config file should be:
 //
 // ```yaml
 // app:
-//   your-app: # <- replace it with your app name, the further KB in cmdr docs.
-//     server:
-//       rate-limits:
-//         - name: by-api-key
-//           interval: 1ms
-//           max-requests: 30
-//           header-key-name: X-API-KEY
-//           exception-keys: [voxr-apps-test-api-key-fndsfjn]
+//
+//	your-app: # <- replace it with your app name, the further KB in cmdr docs.
+//	  server:
+//	    rate-limits:
+//	      - name: by-api-key
+//	        interval: 1ms
+//	        max-requests: 30
+//	        header-key-name: X-API-KEY
+//	        exception-keys: [voxr-apps-test-api-key-fndsfjn]
+//
 // ```
 //
 // See also middleware.LoadConfigForGin
@@ -53,7 +60,7 @@ func LoadConfig(keyPath string) []Config {
 	var dd []Config
 	err := cmdr.GetSectionFrom(conf.AppName+"."+keyPath, &dd)
 	if err != nil {
-		log.Warnf("load '%v' failed: %v", keyPath, err)
+		logger.Warnf("load '%v' failed: %v", keyPath, err)
 	}
 	for _, c := range dd {
 		if c.Algorithm == "" {
@@ -75,16 +82,17 @@ type Router interface {
 //
 // ```yaml
 // app:
-//   your-app: # <- replace it with your app name, the further KB in cmdr docs.
-//     server:
-//       rate-limits:
-//         - name: by-api-key
-//           interval: 1ms
-//           max-requests: 30
-//           header-key-name: X-API-KEY
-//           exception-keys: [voxr-apps-test-api-key-fndsfjn]
-// ```
 //
+//	your-app: # <- replace it with your app name, the further KB in cmdr docs.
+//	  server:
+//	    rate-limits:
+//	      - name: by-api-key
+//	        interval: 1ms
+//	        max-requests: 30
+//	        header-key-name: X-API-KEY
+//	        exception-keys: [voxr-apps-test-api-key-fndsfjn]
+//
+// ```
 func LoadConfigForGin(keyPath string, rg Router) {
 	limiterConfigs := LoadConfig(keyPath)
 	for _, cfg := range limiterConfigs {

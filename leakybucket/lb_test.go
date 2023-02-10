@@ -2,14 +2,15 @@ package leakybucket_test
 
 import (
 	"fmt"
-	"github.com/hedzr/cmdr/tool/randomizer"
-	"github.com/hedzr/rate/leakybucket"
-	"github.com/hedzr/rate/rateapi"
 	"math/rand"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/hedzr/rate/internal/randomizer"
+	"github.com/hedzr/rate/leakybucket"
+	"github.com/hedzr/rate/rateapi"
 )
 
 func BenchmarkRandInt(b *testing.B) {

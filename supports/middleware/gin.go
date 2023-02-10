@@ -1,12 +1,16 @@
+//go:build ignore
+// +build ignore
+
 package middleware
 
 import (
+	"errors"
 	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hedzr/rate"
 	"github.com/hedzr/rate/rateapi"
-	"gopkg.in/hedzr/errors.v2"
-	"time"
 )
 
 // ForGin builds a gin.HandlerFunc from a Config object
@@ -151,7 +155,6 @@ func (r *exLimiter) Middleware() gin.HandlerFunc {
 
 // ErrRateLimitPassed identify a special state that an exception key was found.
 // The limiter shouldn't be applied to the request which has been tagged with the exception key.
-//
 var ErrRateLimitPassed = errors.New("always passed up for exceptions")
 
 const passedBucketName = "exceptions-met"

@@ -2,14 +2,15 @@ package tokenbucket_test
 
 import (
 	"fmt"
-	"github.com/hedzr/cmdr/tool/randomizer"
-	"github.com/hedzr/rate/rateapi"
-	"github.com/hedzr/rate/tokenbucket"
 	"math/rand"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/hedzr/rate/internal/randomizer"
+	"github.com/hedzr/rate/rateapi"
+	"github.com/hedzr/rate/tokenbucket"
 )
 
 func BenchmarkRandInt(b *testing.B) {

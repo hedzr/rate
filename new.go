@@ -2,12 +2,13 @@
 package rate
 
 import (
+	"errors"
+	"time"
+
 	"github.com/hedzr/rate/counter"
 	"github.com/hedzr/rate/leakybucket"
 	"github.com/hedzr/rate/rateapi"
 	"github.com/hedzr/rate/tokenbucket"
-	"gopkg.in/hedzr/errors.v2"
-	"time"
 )
 
 // Algorithm represents the rate limit algorithm specifically
@@ -28,8 +29,6 @@ const (
 //
 // - use a right algorithm name such as rate.LeakyBucket, rate.TokenBucket
 // - or register yours implement with rate.Register and assign it by algorithm name.
-//
-//
 func New(algorithm Algorithm, maxCount int64, d time.Duration) rateapi.Limiter {
 	if lfn, ok := knownLimiters[algorithm]; ok {
 		return lfn(maxCount, d)
