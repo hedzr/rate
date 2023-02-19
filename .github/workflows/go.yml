@@ -207,6 +207,8 @@ jobs:
           [ -d $fromdir/cli ] && fromdir="$fromdir/cli"
           middir="./examples"
           cp -R $fromdir $middir
+          sed -i 's#//go:build ignore#//#' ./supports/middleware/*.go
+          sed -i 's#// +build ignore#//#' ./supports/middleware/*.go
           go mod tidy
           for app in $(ls -b $middir); do
           for dir in .; do
