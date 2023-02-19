@@ -210,6 +210,8 @@ jobs:
             for GOOS in $OSes; do
               for GOARCH in $ARCHes; do
                 suf=; suf2=tgz; if [[ $GOOS == "windows" ]]; then suf=".exe"; suf2=7z; if [ "$GOARCH" == "arm64" ]; then GOARCH=arm; fi; fi
+                go mod init github.com/hedzr/rate/_examples/$app
+                go mod tidy
                 GOOS=$GOOS GOARCH=$GOARCH CGO_ENABLED=0 go build -v -trimpath -ldflags "$LDFLAGS" -o ./bin/$APP_NAME$suf $fromdir/$dir/$app
                 chmod +x ./bin/$APP_NAME$suf
                 if [[ $GOOS == "windows" ]]; then
