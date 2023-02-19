@@ -205,14 +205,15 @@ jobs:
           # for dir in cli; do
           fromdir="$FROM_FOLDER"
           [ -d $fromdir/cli ] && fromdir="$fromdir/cli"
-          for app in $(ls -b $fromdir); do
+          middir="./examples"
+          cp -R $fromdir $middir
+          go mod tidy
+          for app in $(ls -b $middir); do
           for dir in .; do
             for GOOS in $OSes; do
               for GOARCH in $ARCHes; do
                 suf=; suf2=tgz; if [[ $GOOS == "windows" ]]; then suf=".exe"; suf2=7z; if [ "$GOARCH" == "arm64" ]; then GOARCH=arm; fi; fi
-                go mod init github.com/hedzr/rate/_examples/$app
-                go mod tidy
-                GOOS=$GOOS GOARCH=$GOARCH CGO_ENABLED=0 go build -v -trimpath -ldflags "$LDFLAGS" -o ./bin/$APP_NAME$suf $fromdir/$dir/$app
+                GOOS=$GOOS GOARCH=$GOARCH CGO_ENABLED=0 go build -v -trimpath -ldflags "$LDFLAGS" -o ./bin/$APP_NAME$suf $middir/$dir/$app
                 chmod +x ./bin/$APP_NAME$suf
                 if [[ $GOOS == "windows" ]]; then
                   7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf
